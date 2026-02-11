@@ -132,8 +132,20 @@
         document.getElementById('totalConv').textContent = d.totals.conv;
         document.getElementById('dateRange').textContent = d.dateRange + ' · Monthly performance by published date';
         
-        const tableUrl = 'https://tables.zapier.com/app/tables/t/01J60H9NRPRWTY54KN0563JMBX?secrets=MTp0YWJsZTpjekx3eWFJbWdRWjVqU29HOHhMa0NicUltbFhyLU5ocFVwRjRiS2ppNnNzOmh3dzZ2bg';
-        const sourceHtml = `Source: <a href="${tableUrl}" target="_blank">Zapier Video &amp; Influencer ROI table</a> · Data exported by Zap daily - last run ${d.exportDate}`;
+        const tableUrl = 'https://tables.zapier.com/app/tables/t/01J60H9NRPRWTY54KN0563JMBX?secrets=MTp0YWJsZTpjekx3eWFJbWdRWjVqU29HOHhMa0NicUltbFhyLU5vcFVwRjRiS2ppNnNzOmh3dzZ2bg';
+        
+        // Format timestamp if available, fallback to date
+        let timeStr = d.exportDate || new Date().toISOString().split('T')[0];
+        if (d.exportTimestamp) {
+          const lastRun = new Date(d.exportTimestamp);
+          timeStr = lastRun.toLocaleString('en-US', { 
+            month: 'short', day: 'numeric', year: 'numeric',
+            hour: '2-digit', minute: '2-digit', second: '2-digit',
+            timeZone: 'UTC'
+          }) + ' UTC';
+        }
+        
+        const sourceHtml = `Source: <a href="${tableUrl}" target="_blank">Zapier Video &amp; Influencer ROI table</a> · Data exported by Zap daily - last run ${timeStr}`;
         document.getElementById('sourceNote').innerHTML = sourceHtml;
         
         loadingEl.classList.add('hidden');
