@@ -1,6 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zapier Influencer ROI — 12 Month Trend</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0d1117; color: #e6edf3; font-family: 'DM Sans', sans-serif; min-height: 100vh; padding: 32px; }
+    .header { max-width: 1100px; margin: 0 auto 8px; }
+    .header h1 { font-family: 'Space Mono', monospace; font-size: 22px; font-weight: 700; color: #f0f6fc; letter-spacing: -0.5px; }
+    .header p { font-size: 13px; color: #7d8590; margin-top: 4px; }
+    .chart-container { max-width: 1100px; margin: 0 auto; position: relative; }
+    .chart-wrap { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 28px 24px 16px; margin-bottom: 16px; }
+    .chart-wrap h2 { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+    .dot-views { background: #58a6ff; }
+    .dot-clicks { background: #f78166; }
+    .dot-conv { background: #3fb950; }
+    canvas { width: 100% !important; }
+    .kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 1100px; margin: 0 auto 20px; }
+    .kpi { background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 16px 20px; }
+    .kpi-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; color: #7d8590; font-family: 'Space Mono', monospace; }
+    .kpi-value { font-size: 28px; font-weight: 700; margin-top: 4px; font-family: 'Space Mono', monospace; }
+    .kpi-sub { font-size: 12px; color: #7d8590; margin-top: 2px; }
+    .kpi-views .kpi-value { color: #58a6ff; }
+    .kpi-clicks .kpi-value { color: #f78166; }
+    .kpi-conv .kpi-value { color: #3fb950; }
+    .note { max-width: 1100px; margin: 0 auto; font-size: 11px; color: #484f58; text-align: right; font-family: 'Space Mono', monospace; }
+    .loading-overlay { max-width: 1100px; margin: 60px auto; text-align: center; font-family: 'Space Mono', monospace; color: #7d8590; }
+    .loading-overlay .spinner { width: 32px; height: 32px; border: 3px solid #30363d; border-top-color: #58a6ff; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error-msg { max-width: 1100px; margin: 60px auto; text-align: center; font-family: 'Space Mono', monospace; color: #f78166; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div id="loading" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Loading dashboard data…</p>
+  </div>
+  <div id="error" class="error-msg hidden">
+    <p>Failed to load data.</p>
+  </div>
+  <div id="dashboard" class="hidden">
+    <div class="header">
+      <h1>Zapier Video &amp; Influencer ROI</h1>
+      <p id="dateRange"></p>
+    </div>
+    <div class="kpi-row">
+      <div class="kpi kpi-views">
+        <div class="kpi-label">Total Views</div>
+        <div class="kpi-value" id="totalViews"></div>
+        <div class="kpi-sub">12-month total</div>
+      </div>
+      <div class="kpi kpi-clicks">
+        <div class="kpi-label">Total Clicks</div>
+        <div class="kpi-value" id="totalClicks"></div>
+        <div class="kpi-sub">Bitly link clicks</div>
+      </div>
+      <div class="kpi kpi-conv">
+        <div class="kpi-label">Total Conversions</div>
+        <div class="kpi-value" id="totalConv"></div>
+        <div class="kpi-sub">Zapier signups</div>
+      </div>
+    </div>
+    <div class="chart-container">
+      <div class="chart-wrap">
+        <h2><span class="dot dot-views"></span> Views</h2>
+        <canvas id="viewsChart" height="140"></canvas>
+      </div>
+      <div class="chart-wrap">
+        <h2><span class="dot dot-clicks"></span> Bitly Clicks</h2>
+        <canvas id="clicksChart" height="140"></canvas>
+      </div>
+      <div class="chart-wrap">
+        <h2><span class="dot dot-conv"></span> Zapier Conversions</h2>
+        <canvas id="convChart" height="140"></canvas>
+      </div>
+    </div>
+    <div class="note" id="sourceNote"></div>
+  </div>
+  <script>
+    const gridColor = '#21262d';
+    const tickColor = '#484f58';
+    const commonOptions = (fmt) => ({
+      responsive: true, maintainAspectRatio: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1c2128', borderColor: '#30363d', borderWidth: 1,
+          titleFont: { family: "'Space Mono', monospace", size: 12 },
+          bodyFont: { family: "'DM Sans', sans-serif", size: 13 },
+          padding: 12, cornerRadius: 8,
+          callbacks: { label: (ctx) => fmt(ctx.parsed.y) }
+        }
+      },
+      scales: {
+        x: { grid: { color: gridColor, drawBorder: false }, ticks: { color: tickColor, font: { family: "'Space Mono', monospace", size: 11 } } },
+        y: { grid: { color: gridColor, drawBorder: false }, ticks: { color: tickColor, font: { family: "'Space Mono', monospace", size: 11 }, callback: (v) => fmt(v) } }
+      }
+    });
+    function makeChart(id, labels, data, color, fmt) {
+      const ctx = document.getElementById(id).getContext('2d');
+      const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+      gradient.addColorStop(0, color + '30');
+      gradient.addColorStop(1, color + '00');
+      new Chart(ctx, {
+        type: 'line',
+        data: { labels, datasets: [{ data, borderColor: color, backgroundColor: gradient, borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: '#0d1117', pointBorderColor: color, pointBorderWidth: 2, pointHoverRadius: 7, pointHoverBackgroundColor: color, tension: 0.3, fill: true }] },
+        options: commonOptions(fmt)
+      });
+    }
+    const fmtViews = (v) => v >= 1e6 ? (v/1e6).toFixed(1)+'M' : v >= 1e3 ? (v/1e3).toFixed(0)+'K' : v.toString();
+    const fmtClicks = (v) => v >= 1e3 ? (v/1e3).toFixed(1)+'K' : v.toLocaleString();
+    const fmtConv = (v) => v.toLocaleString();
+    async function loadDashboard() {
+      const loadingEl = document.getElementById('loading');
+      const errorEl = document.getElementById('error');
+      const dashboardEl = document.getElementById('dashboard');
+      try {
+        const resp = await fetch('data.json', { cache: 'no-cache' });
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const d = await resp.json();
+        document.getElementById('totalViews').textContent = d.totals.views;
+        document.getElementById('totalClicks').textContent = d.totals.clicks;
+        document.getElementById('totalConv').textContent = d.totals.conv;
+        document.getElementById('dateRange').textContent = d.dateRange + ' \u00b7 Monthly performance by published date';
+        document.getElementById('sourceNote').textContent = 'Source: Zapier Video & Influencer ROI table \u00b7 Updated ' + d.exportDate;
+        loadingEl.classList.add('hidden');
+        dashboardEl.classList.remove('hidden');
+        makeChart('viewsChart', d.labels, d.views, '#58a6ff', fmtViews);
+        makeChart('clicksChart', d.labels, d.clicks, '#f78166', fmtClicks);
+        makeChart('convChart', d.labels, d.conv, '#3fb950', fmtConv);
+      } catch (err) {
+        console.error('Dashboard data load failed:', err);
+        loadingEl.classList.add('hidden');
+        errorEl.classList.remove('hidden');
+      }
+    }
+    loadDashboard();
+  </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zapier Influencer ROI — 12 Month Trend</title>
