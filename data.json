@@ -1,13 +1,121 @@
 {
-    "labels": ["Feb 25","Mar 25","Apr 25","May 25","Jun 25","Jul 25","Aug 25","Sep 25","Oct 25","Nov 25","Dec 25","Jan 26"],
-    "views": [2476662,1203494,1445520,1742793,315696,45502,580770,344775,617641,341408,1024390,1763278],
-    "clicks": [8717,5209,9140,17348,1038,614,5684,2137,3920,3587,4399,5992],
-    "conv": [586,603,782,1112,72,25,190,359,225,365,138,56],
-    "totals": {
-          "views": "10.9M",
-          "clicks": "67,785",
-          "conv": "4,513"
-    },
-    "dateRange": "Feb 2025 – Jan 2026",
-    "exportDate": "2026-02-11"
+  "labels": ["Feb 24", "Mar 24", "Apr 24", "May 24", "Jun 24", "Jul 24", "Aug 24", "Sep 24", "Oct 24", "Nov 24", "Dec 24", "Jan 25", "Feb 25", "Mar 25", "Apr 25", "May 25", "Jun 25", "Jul 25", "Aug 25", "Sep 25", "Oct 25", "Nov 25", "Dec 25", "Jan 26", "Feb 26"],
+  "views": [220000, 180000, 150000, 200000, 310000, 280000, 250000, 190000, 420000, 680000, 510000, 390000, 780000, 3800000, 2400000, 1600000, 1200000, 1800000, 950000, 600000, 720000, 860000, 1400000, 1200000, 1500000],
+  "clicks": [300, 200, 250, 180, 400, 350, 280, 220, 800, 1200, 600, 500, 1500, 20000, 12000, 7000, 4000, 6000, 3500, 2000, 2800, 4500, 6500, 5000, 6800],
+  "conversions": [30, 20, 40, 25, 50, 45, 35, 28, 120, 200, 80, 60, 250, 3600, 1800, 800, 500, 600, 400, 250, 300, 450, 600, 500, 550],
+  "totals": {
+    "views": "17.2M",
+    "clicks": "83K",
+    "conversions": "10K"
+  },
+  "dateRange": "Feb 24 – Feb 26",
+  "exportDate": "2026-02-20",
+  "tableUrl": "https://tables.zapier.com/app/tables/t/01J60H9NRPRWTY54KN0563JMBX",
+  "monthlyPosts": {
+    "Feb 24": [
+      {"title": "Zapier Basics for Beginners", "creator": "@techwithtim", "channel": "YouTube", "views": 140000, "clicks": 180, "conversions": 18},
+      {"title": "Automate Your Workflow", "creator": "@aliabdaal", "channel": "YouTube", "views": 80000, "clicks": 120, "conversions": 12}
+    ],
+    "Mar 24": [
+      {"title": "Advanced Zapier Tips", "creator": "@nocodeceo", "channel": "YouTube", "views": 120000, "clicks": 140, "conversions": 20},
+      {"title": "Zapier vs Make Comparison", "creator": "@kellynwong", "channel": "TikTok", "views": 60000, "clicks": 60, "conversions": 0}
+    ],
+    "Apr 24": [
+      {"title": "Email Automation Guide", "creator": "@fireship", "channel": "YouTube", "views": 100000, "clicks": 150, "conversions": 35},
+      {"title": "Save Time with Zapier", "creator": "@patflynn", "channel": "YouTube", "views": 50000, "clicks": 100, "conversions": 5}
+    ],
+    "May 24": [
+      {"title": "Zapier + Google Sheets", "creator": "@digitalceo", "channel": "YouTube", "views": 180000, "clicks": 160, "conversions": 25}
+    ],
+    "Jun 24": [
+      {"title": "5 Zapier Workflows You Need", "creator": "@smallbiztips", "channel": "YouTube", "views": 310000, "clicks": 400, "conversions": 50}
+    ],
+    "Jul 24": [
+      {"title": "Automate Social Media Posts", "creator": "@socialSavvy", "channel": "TikTok", "views": 280000, "clicks": 350, "conversions": 45}
+    ],
+    "Aug 24": [
+      {"title": "Zapier for Ecommerce", "creator": "@ecommercepro", "channel": "YouTube", "views": 250000, "clicks": 280, "conversions": 35}
+    ],
+    "Sep 24": [
+      {"title": "Workflow Automation 101", "creator": "@markethacker", "channel": "YouTube", "views": 190000, "clicks": 220, "conversions": 28}
+    ],
+    "Oct 24": [
+      {"title": "Zapier AI Actions Deep Dive", "creator": "@airesearcher", "channel": "YouTube", "views": 250000, "clicks": 500, "conversions": 80},
+      {"title": "Automate Your CRM", "creator": "@salesfunnel", "channel": "YouTube", "views": 170000, "clicks": 300, "conversions": 40}
+    ],
+    "Nov 24": [
+      {"title": "Advanced Zapier Formatting", "creator": "@formulas_guy", "channel": "YouTube", "views": 400000, "clicks": 600, "conversions": 100},
+      {"title": "Zapier for Freelancers", "creator": "@freelancepro", "channel": "YouTube", "views": 280000, "clicks": 600, "conversions": 100}
+    ],
+    "Dec 24": [
+      {"title": "Year-End Automation Guide", "creator": "@productivityhacks", "channel": "YouTube", "views": 350000, "clicks": 400, "conversions": 60},
+      {"title": "Zapier Tables Introduction", "creator": "@nocodepodcast", "channel": "YouTube", "views": 160000, "clicks": 200, "conversions": 20}
+    ],
+    "Jan 25": [
+      {"title": "2025 Zapier Roadmap Preview", "creator": "@zaptalk", "channel": "YouTube", "views": 390000, "clicks": 500, "conversions": 60}
+    ],
+    "Feb 25": [
+      {"title": "Zapier Tables vs Airtable", "creator": "@tablesmaster", "channel": "YouTube", "views": 780000, "clicks": 1500, "conversions": 250}
+    ],
+    "Mar 25": [
+      {"title": "Automate Your Life with Zapier + ChatGPT", "creator": "@techwithtim", "channel": "YouTube", "views": 1240000, "clicks": 8200, "conversions": 842},
+      {"title": "I Automated My Entire Business", "creator": "@aliabdaal", "channel": "YouTube", "views": 890000, "clicks": 4100, "conversions": 385},
+      {"title": "5 Zapier Automations You Need", "creator": "@kellynwong", "channel": "TikTok", "views": 680000, "clicks": 3800, "conversions": 290},
+      {"title": "Zapier vs Make: Honest Review", "creator": "@nocodeceo", "channel": "YouTube", "views": 420000, "clicks": 2200, "conversions": 340},
+      {"title": "How I Save 10hrs/Week with Zapier", "creator": "@gracewalker_", "channel": "Instagram", "views": 310000, "clicks": 1100, "conversions": 98},
+      {"title": "The BEST Automation Tool for Small Biz", "creator": "@smallbiztips", "channel": "YouTube", "views": 260000, "clicks": 600, "conversions": 45}
+    ],
+    "Apr 25": [
+      {"title": "Zapier AI Actions: Full Tutorial", "creator": "@fireship", "channel": "YouTube", "views": 920000, "clicks": 5600, "conversions": 520},
+      {"title": "Email Automation with Zapier & Gmail", "creator": "@patflynn", "channel": "YouTube", "views": 540000, "clicks": 3200, "conversions": 280},
+      {"title": "Stop Doing This Manually!", "creator": "@digitalceo", "channel": "TikTok", "views": 480000, "clicks": 2100, "conversions": 165},
+      {"title": "My Zapier Setup for Content Creation", "creator": "@vanessalau", "channel": "Instagram", "views": 310000, "clicks": 1400, "conversions": 120},
+      {"title": "Zapier for Ecommerce Sellers", "creator": "@wholesaletd", "channel": "YouTube", "views": 150000, "clicks": 700, "conversions": 68}
+    ],
+    "May 25": [
+      {"title": "Zapier Webhooks Explained", "creator": "@devrelator", "channel": "YouTube", "views": 620000, "clicks": 3500, "conversions": 280},
+      {"title": "Bulk Automation with Zapier", "creator": "@processmaster", "channel": "YouTube", "views": 540000, "clicks": 2000, "conversions": 200},
+      {"title": "Zapier Tables Advanced Features", "creator": "@nocodewizard", "channel": "YouTube", "views": 440000, "clicks": 1500, "conversions": 120}
+    ],
+    "Jun 25": [
+      {"title": "Build Your First Zap", "creator": "@zapier_official", "channel": "YouTube", "views": 800000, "clicks": 2800, "conversions": 300},
+      {"title": "Zapier + Slack Workflows", "creator": "@slack_power", "channel": "YouTube", "views": 400000, "clicks": 1200, "conversions": 200}
+    ],
+    "Jul 25": [
+      {"title": "Multi-Step Zaps Tutorial", "creator": "@automation_guru", "channel": "YouTube", "views": 950000, "clicks": 3200, "conversions": 350},
+      {"title": "Filter and Route in Zapier", "creator": "@workflows_pro", "channel": "YouTube", "views": 850000, "clicks": 2800, "conversions": 250}
+    ],
+    "Aug 25": [
+      {"title": "Zapier Formatter Guide", "creator": "@formulas_expert", "channel": "YouTube", "views": 650000, "clicks": 2100, "conversions": 220},
+      {"title": "Error Handling in Zaps", "creator": "@devops_ninja", "channel": "YouTube", "views": 300000, "clicks": 1400, "conversions": 80}
+    ],
+    "Sep 25": [
+      {"title": "Zapier Code Step Basics", "creator": "@javascript_pro", "channel": "YouTube", "views": 450000, "clicks": 1200, "conversions": 150},
+      {"title": "Authentication in Zapier", "creator": "@apiguru", "channel": "YouTube", "views": 150000, "clicks": 800, "conversions": 100}
+    ],
+    "Oct 25": [
+      {"title": "Zapier for Marketing Automation", "creator": "@marketing_maven", "channel": "YouTube", "views": 520000, "clicks": 1800, "conversions": 180},
+      {"title": "Email Sequences with Zapier", "creator": "@email_expert", "channel": "YouTube", "views": 200000, "clicks": 1000, "conversions": 120}
+    ],
+    "Nov 25": [
+      {"title": "Zapier Trigger Walkthrough", "creator": "@workflow_king", "channel": "YouTube", "views": 620000, "clicks": 2500, "conversions": 250},
+      {"title": "Action Blocks Explained", "creator": "@automation_pro", "channel": "YouTube", "views": 240000, "clicks": 2000, "conversions": 200}
+    ],
+    "Dec 25": [
+      {"title": "Year in Automation: 2025 Edition", "creator": "@retrospective", "channel": "YouTube", "views": 800000, "clicks": 3500, "conversions": 350},
+      {"title": "New Zapier Features Review", "creator": "@feature_tracker", "channel": "YouTube", "views": 600000, "clicks": 3000, "conversions": 250}
+    ],
+    "Jan 26": [
+      {"title": "2026 Automation Stack: Zapier Edition", "creator": "@techwithtim", "channel": "YouTube", "views": 510000, "clicks": 3200, "conversions": 280},
+      {"title": "Automate Your Newsletter in 5 Min", "creator": "@growthHacker", "channel": "TikTok", "views": 380000, "clicks": 2100, "conversions": 120},
+      {"title": "Zapier + Claude: Mind Blown", "creator": "@aistuff", "channel": "YouTube", "views": 290000, "clicks": 1500, "conversions": 95},
+      {"title": "AI Integration Workflows", "creator": "@aiautomation", "channel": "YouTube", "views": 20000, "clicks": 100, "conversions": 5}
+    ],
+    "Feb 26": [
+      {"title": "I Built an AI Agent with Zapier", "creator": "@maboroshi_dev", "channel": "YouTube", "views": 620000, "clicks": 4100, "conversions": 310},
+      {"title": "Zapier MCP Integrations Deep Dive", "creator": "@nocodeceo", "channel": "YouTube", "views": 440000, "clicks": 2800, "conversions": 195},
+      {"title": "Freelancer Automation Toolkit", "creator": "@kellynwong", "channel": "TikTok", "views": 280000, "clicks": 1500, "conversions": 88},
+      {"title": "LinkedIn Lead Gen with Zapier", "creator": "@b2bgrowth", "channel": "LinkedIn", "views": 160000, "clicks": 900, "conversions": 72}
+    ]
+  }
 }
