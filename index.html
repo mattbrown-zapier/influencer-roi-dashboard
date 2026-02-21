@@ -779,9 +779,14 @@ function openDrawer(monthKey) {
   });
 
   renderPosts();
-  document.getElementById('drawer').classList.add('open');
-  document.getElementById('drawer-overlay').classList.add('open');
-  document.getElementById('app').classList.add('drawer-open');
+  
+  // Only open drawer if not already open
+  const drawer = document.getElementById('drawer');
+  if (!drawer.classList.contains('open')) {
+    drawer.classList.add('open');
+    document.getElementById('drawer-overlay').classList.add('open');
+    document.getElementById('app').classList.add('drawer-open');
+  }
 }
 
 function closeDrawer() {
