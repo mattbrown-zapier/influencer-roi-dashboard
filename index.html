@@ -856,18 +856,51 @@ async function loadDashboard() {
   try {
     const resp = await fetch('data.json', { cache: 'no-cache' });
     if (!resp.ok) throw new Error('Failed to load data');
-    dashboardData = await resp.json();
+    let data = await resp.json();
+
+    // Handle old Zap format: transform to new format
+    if (!data.monthlyPosts && data.posts) {
+      const monthMap = {
+        "2024-02": "Feb 24", "2024-03": "Mar 24", "2024-04": "Apr 24", "2024-05": "May 24",
+        "2024-06": "Jun 24", "2024-07": "Jul 24", "2024-08": "Aug 24", "2024-09": "Sep 24",
+        "2024-10": "Oct 24", "2024-11": "Nov 24", "2024-12": "Dec 24", "2025-01": "Jan 25",
+        "2025-02": "Feb 25", "2025-03": "Mar 25", "2025-04": "Apr 25", "2025-05": "May 25",
+        "2025-06": "Jun 25", "2025-07": "Jul 25", "2025-08": "Aug 25", "2025-09": "Sep 25",
+        "2025-10": "Oct 25", "2025-11": "Nov 25", "2025-12": "Dec 25", "2026-01": "Jan 26",
+        "2026-02": "Feb 26"
+      };
+
+      const monthlyPosts = {};
+      for (const [isoMonth, posts] of Object.entries(data.posts)) {
+        const label = monthMap[isoMonth];
+        if (label) {
+          monthlyPosts[label] = posts.map(p => ({
+            title: p.f14 || 'Untitled',
+            creator: p.f15 || 'Unknown',
+            channel: p.f4?.includes('youtube') ? 'YouTube' : p.f4?.includes('tiktok') ? 'TikTok' : p.f4?.includes('instagram') ? 'Instagram' : 'LinkedIn',
+            views: p.views || 0,
+            clicks: p.clicks || 0,
+            conversions: p.conv || 0
+          }));
+        }
+      }
+      data.monthlyPosts = monthlyPosts;
+      if (!data.conversions && data.conv) data.conversions = data.conv;
+    }
+
+    dashboardData = data;
 
     document.getElementById('kpi-views').textContent = dashboardData.totals.views;
     document.getElementById('kpi-clicks').textContent = dashboardData.totals.clicks;
-    document.getElementById('kpi-convs').textContent = dashboardData.totals.conversions;
+    document.getElementById('kpi-convs').textContent = dashboardData.totals.conv || dashboardData.totals.conversions;
     document.getElementById('date-label').textContent = dashboardData.dateRange;
     document.getElementById('last-run').textContent = dashboardData.exportDate;
     document.getElementById('table-link').href = dashboardData.tableUrl || '#';
 
+    const convData = dashboardData.conversions || dashboardData.conv || [];
     renderChart('chart-views', dashboardData.views, 'blue');
     renderChart('chart-clicks', dashboardData.clicks, 'orange');
-    renderChart('chart-convs', dashboardData.conversions, 'green');
+    renderChart('chart-convs', convData, 'green');
   } catch (err) {
     console.error('Load failed:', err);
   }
