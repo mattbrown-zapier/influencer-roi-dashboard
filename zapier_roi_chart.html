@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zapier Influencer ROI — 12 Month Trend</title>
+  <title>Zapier Influencer ROI Dashboard</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
@@ -19,7 +19,7 @@
     .dot-views { background: #58a6ff; }
     .dot-clicks { background: #f78166; }
     .dot-conv { background: #3fb950; }
-    canvas { width: 100% !important; }
+    canvas { width: 100% !important; cursor: pointer; }
     .kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 1100px; margin: 0 auto 20px; }
     .kpi { background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 16px 20px; }
     .kpi-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; color: #7d8590; font-family: 'Space Mono', monospace; }
@@ -28,7 +28,7 @@
     .kpi-views .kpi-value { color: #58a6ff; }
     .kpi-clicks .kpi-value { color: #f78166; }
     .kpi-conv .kpi-value { color: #3fb950; }
-    .note { max-width: 1100px; margin: 0 auto; font-size: 11px; color: #484f58; text-align: right; font-family: 'Space Mono', monospace; }
+    .note { max-width: 1100px; margin: 12px auto 0; font-size: 11px; color: #484f58; text-align: right; font-family: 'Space Mono', monospace; }
     .note a { color: #58a6ff; text-decoration: none; }
     .note a:hover { text-decoration: underline; }
     .loading-overlay { max-width: 1100px; margin: 60px auto; text-align: center; font-family: 'Space Mono', monospace; color: #7d8590; }
@@ -36,12 +36,60 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     .error-msg { max-width: 1100px; margin: 60px auto; text-align: center; font-family: 'Space Mono', monospace; color: #f78166; }
     .hidden { display: none; }
+    .chart-wrap .click-hint { font-size: 11px; color: #484f58; font-family: 'Space Mono', monospace; margin-top: 8px; text-align: center; }
+    .drilldown { max-width: 1100px; margin: 0 auto; }
+    .drilldown-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .btn-back { background: #21262d; color: #e6edf3; border: 1px solid #30363d; border-radius: 8px; padding: 8px 16px; font-family: 'Space Mono', monospace; font-size: 12px; cursor: pointer; transition: background 0.15s; }
+    .btn-back:hover { background: #30363d; }
+    .drilldown-title { font-family: 'Space Mono', monospace; font-size: 18px; font-weight: 700; color: #f0f6fc; }
+    .drilldown-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+    .table-wrap { background: #161b22; border: 1px solid #30363d; border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
+    .table-wrap table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .table-wrap th { background: #1c2128; font-family: 'Space Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #7d8590; padding: 12px 14px; text-align: left; cursor: pointer; user-select: none; white-space: nowrap; border-bottom: 1px solid #30363d; }
+    .table-wrap th:hover { color: #e6edf3; }
+    .table-wrap th.sorted-asc::after { content: ' \u25B2'; color: #58a6ff; }
+    .table-wrap th.sorted-desc::after { content: ' \u25BC'; color: #58a6ff; }
+    .table-wrap td { padding: 10px 14px; border-bottom: 1px solid #21262d; color: #e6edf3; vertical-align: top; }
+    .table-wrap tr:last-child td { border-bottom: none; }
+    .table-wrap tr:hover td { background: #1c2128; }
+    .table-wrap a { color: #58a6ff; text-decoration: none; }
+    .table-wrap a:hover { text-decoration: underline; }
+    .table-wrap .num { font-family: 'Space Mono', monospace; text-align: right; }
+    .table-wrap .views-col { color: #58a6ff; }
+    .table-wrap .clicks-col { color: #f78166; }
+    .table-wrap .conv-col { color: #3fb950; }
+    .table-wrap .caption-cell { max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #7d8590; font-size: 12px; }
+    .badge { display: inline-block; font-size: 10px; font-family: 'Space Mono', monospace; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .badge-tofu { background: #58a6ff20; color: #58a6ff; }
+    .badge-mofu { background: #f7816620; color: #f78166; }
+    .badge-bofu { background: #3fb95020; color: #3fb950; }
+    .section-card { max-width: 1100px; margin: 0 auto 16px; background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 24px; }
+    .section-card h3 { font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+    .section-card .section-sub { font-size: 11px; color: #484f58; font-family: 'Space Mono', monospace; margin-bottom: 16px; }
+    .section-card .ai-content { font-size: 14px; line-height: 1.65; color: #c9d1d9; }
+    .section-card .ai-content strong { color: #f0f6fc; }
+    .section-card .ai-content p { margin-bottom: 10px; }
+    .section-card .ai-content ul { margin: 8px 0 12px 20px; }
+    .section-card .ai-content li { margin-bottom: 4px; }
+    .trends-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+    .trend-item { background: #1c2128; border: 1px solid #30363d; border-radius: 8px; padding: 12px 14px; }
+    .trend-topic { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #f0f6fc; margin-bottom: 4px; }
+    .trend-meta { font-size: 11px; color: #7d8590; display: flex; align-items: center; gap: 6px; }
+    .trend-rising { color: #3fb950; }
+    .trend-declining { color: #f78166; }
+    .trend-stable { color: #7d8590; }
+    .channel-recs { display: grid; gap: 12px; }
+    .channel-rec { background: #1c2128; border: 1px solid #30363d; border-radius: 8px; padding: 16px; }
+    .channel-rec-header { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #f0f6fc; margin-bottom: 6px; }
+    .channel-rec-body { font-size: 13px; line-height: 1.55; color: #c9d1d9; }
+    .channel-rec-rationale { font-size: 12px; color: #7d8590; margin-top: 6px; font-style: italic; }
+    .placeholder-msg { font-size: 13px; color: #484f58; font-style: italic; font-family: 'Space Mono', monospace; padding: 16px 0; }
   </style>
 </head>
 <body>
   <div id="loading" class="loading-overlay">
     <div class="spinner"></div>
-    <p>Loading dashboard data…</p>
+    <p>Loading dashboard data...</p>
   </div>
   <div id="error" class="error-msg hidden">
     <p>Failed to load data.</p>
@@ -55,7 +103,7 @@
       <div class="kpi kpi-views">
         <div class="kpi-label">Total Views</div>
         <div class="kpi-value" id="totalViews"></div>
-        <div class="kpi-sub">12-month total</div>
+        <div class="kpi-sub">All-time total</div>
       </div>
       <div class="kpi kpi-clicks">
         <div class="kpi-label">Total Clicks</div>
@@ -72,6 +120,7 @@
       <div class="chart-wrap">
         <h2><span class="dot dot-views"></span> Views</h2>
         <canvas id="viewsChart" height="140"></canvas>
+        <div class="click-hint">Click a data point to drill into that month</div>
       </div>
       <div class="chart-wrap">
         <h2><span class="dot dot-clicks"></span> Bitly Clicks</h2>
@@ -82,11 +131,52 @@
         <canvas id="convChart" height="140"></canvas>
       </div>
     </div>
+    <div class="section-card" id="aiRecCard">
+      <h3><span style="color:#d2a8ff;">&#9672;</span> AI Recommendations</h3>
+      <div class="section-sub" id="aiModelTag">Analyzing data...</div>
+      <div class="ai-content" id="aiRecContent"><span class="placeholder-msg">AI recommendations will appear here once generated by the daily Zap run.</span></div>
+    </div>
+    <div class="section-card" id="trendingCard">
+      <h3><span style="color:#f78166;">&#9650;</span> Trending Topics</h3>
+      <div class="section-sub">Google Trends via DataForSEO</div>
+      <div class="trends-grid" id="trendingGrid"><span class="placeholder-msg">Trending topics will appear here once the DataForSEO integration is live.</span></div>
+    </div>
+    <div class="section-card" id="channelRecCard">
+      <h3><span style="color:#3fb950;">&#9733;</span> Topic Recommendations per Channel</h3>
+      <div class="section-sub">Suggested next videos for each creator</div>
+      <div class="channel-recs" id="channelRecs"><span class="placeholder-msg">Channel recommendations will appear here once generated by the daily Zap run.</span></div>
+    </div>
     <div class="note" id="sourceNote"></div>
   </div>
+  <div id="drilldown" class="hidden">
+    <div class="drilldown">
+      <div class="drilldown-header">
+        <button class="btn-back" id="btnBack">&#8592; Back to Overview</button>
+        <span class="drilldown-title" id="drilldownTitle"></span>
+      </div>
+      <div class="drilldown-kpis kpi-row" id="drilldownKpis"></div>
+      <div class="table-wrap">
+        <table id="postsTable">
+          <thead><tr id="postsTableHead"></tr></thead>
+          <tbody id="postsTableBody"></tbody>
+        </table>
+      </div>
+      <div class="section-card" id="aiRecMonthCard">
+        <h3><span style="color:#d2a8ff;">&#9672;</span> AI Recommendations</h3>
+        <div class="section-sub" id="aiModelTagMonth"></div>
+        <div class="ai-content" id="aiRecMonthContent"><span class="placeholder-msg">Month-specific AI analysis will appear here once generated.</span></div>
+      </div>
+      <div class="note" id="sourceNoteDrill"></div>
+    </div>
+  </div>
   <script>
+    let DATA = null;
+    let charts = [];
     const gridColor = '#21262d';
     const tickColor = '#484f58';
+    const fmtViews = (v) => v >= 1e6 ? (v/1e6).toFixed(1)+'M' : v >= 1e3 ? (v/1e3).toFixed(0)+'K' : v.toString();
+    const fmtClicks = (v) => v >= 1e3 ? (v/1e3).toFixed(1)+'K' : v.toLocaleString();
+    const fmtConv = (v) => v.toLocaleString();
     const commonOptions = (fmt) => ({
       responsive: true, maintainAspectRatio: true,
       interaction: { mode: 'index', intersect: false },
@@ -97,28 +187,180 @@
           titleFont: { family: "'Space Mono', monospace", size: 12 },
           bodyFont: { family: "'DM Sans', sans-serif", size: 13 },
           padding: 12, cornerRadius: 8,
-          callbacks: { label: (ctx) => fmt(ctx.parsed.y) }
+          callbacks: { label: (ctx) => ' ' + fmt(ctx.parsed.y) }
         }
       },
       scales: {
         x: { grid: { color: gridColor, drawBorder: false }, ticks: { color: tickColor, font: { family: "'Space Mono', monospace", size: 11 } } },
         y: { grid: { color: gridColor, drawBorder: false }, ticks: { color: tickColor, font: { family: "'Space Mono', monospace", size: 11 }, callback: (v) => fmt(v) } }
-      }
+      },
+      onClick: handleChartClick
     });
     function makeChart(id, labels, data, color, fmt) {
       const ctx = document.getElementById(id).getContext('2d');
       const gradient = ctx.createLinearGradient(0, 0, 0, 300);
       gradient.addColorStop(0, color + '30');
       gradient.addColorStop(1, color + '00');
-      new Chart(ctx, {
+      const chart = new Chart(ctx, {
         type: 'line',
         data: { labels, datasets: [{ data, borderColor: color, backgroundColor: gradient, borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: '#0d1117', pointBorderColor: color, pointBorderWidth: 2, pointHoverRadius: 7, pointHoverBackgroundColor: color, tension: 0.3, fill: true }] },
         options: commonOptions(fmt)
       });
+      charts.push(chart);
+      return chart;
     }
-    const fmtViews = (v) => v >= 1e6 ? (v/1e6).toFixed(1)+'M' : v >= 1e3 ? (v/1e3).toFixed(0)+'K' : v.toString();
-    const fmtClicks = (v) => v >= 1e3 ? (v/1e3).toFixed(1)+'K' : v.toLocaleString();
-    const fmtConv = (v) => v.toLocaleString();
+    function handleChartClick(event, elements) {
+      if (!elements.length || !DATA) return;
+      const idx = elements[0].index;
+      const sorted = Object.keys(DATA.posts || {}).sort();
+      if (idx >= sorted.length) return;
+      openDrilldown(sorted[idx]);
+    }
+    let currentSort = { col: 'views', dir: 'desc' };
+    function openDrilldown(monthKey) {
+      const posts = (DATA.posts || {})[monthKey];
+      if (!posts || !posts.length) return;
+      const label = DATA.labels[Object.keys(DATA.posts).sort().indexOf(monthKey)] || monthKey;
+      document.getElementById('dashboard').classList.add('hidden');
+      document.getElementById('drilldown').classList.remove('hidden');
+      document.getElementById('drilldownTitle').textContent = label + ' \u2014 Post Detail';
+      const mViews = posts.reduce((s,p) => s + (p.views||0), 0);
+      const mClicks = posts.reduce((s,p) => s + (p.clicks||0), 0);
+      const mConv = posts.reduce((s,p) => s + (p.conv||0), 0);
+      document.getElementById('drilldownKpis').innerHTML =
+        '<div class="kpi kpi-views"><div class="kpi-label">Month Views</div><div class="kpi-value">'+fmtViews(mViews)+'</div><div class="kpi-sub">'+posts.length+' posts</div></div>'+
+        '<div class="kpi kpi-clicks"><div class="kpi-label">Month Clicks</div><div class="kpi-value">'+fmtClicks(mClicks)+'</div></div>'+
+        '<div class="kpi kpi-conv"><div class="kpi-label">Month Conversions</div><div class="kpi-value">'+fmtConv(mConv)+'</div></div>';
+      currentSort = { col: 'views', dir: 'desc' };
+      renderPostsTable(posts);
+      const aiRec = DATA.aiRecommendations;
+      if (aiRec && aiRec.monthly && aiRec.monthly[monthKey]) {
+        document.getElementById('aiModelTagMonth').textContent = 'Powered by ' + (aiRec.model || 'Claude');
+        document.getElementById('aiRecMonthContent').innerHTML = formatAiText(aiRec.monthly[monthKey]);
+      } else {
+        document.getElementById('aiModelTagMonth').textContent = '';
+        document.getElementById('aiRecMonthContent').innerHTML = '<span class="placeholder-msg">No month-specific analysis available yet. This will be generated once the AI integration runs.</span>';
+      }
+      document.getElementById('sourceNoteDrill').innerHTML = document.getElementById('sourceNote').innerHTML;
+    }
+    function closeDrilldown() {
+      document.getElementById('drilldown').classList.add('hidden');
+      document.getElementById('dashboard').classList.remove('hidden');
+    }
+    function renderPostsTable(posts) {
+      const cols = [
+        { key: 'f2', label: 'Creator', cls: '' },
+        { key: 'f15', label: 'Channel', cls: '' },
+        { key: 'f4', label: 'Post URL', cls: '' },
+        { key: 'views', label: 'Views', cls: 'num views-col' },
+        { key: 'clicks', label: 'Clicks', cls: 'num clicks-col' },
+        { key: 'conv', label: 'Conv', cls: 'num conv-col' },
+        { key: 'f3', label: 'Investment', cls: 'num' },
+        { key: 'f23val', label: 'Funnel', cls: '' },
+        { key: 'f14', label: 'Caption', cls: 'caption-cell' }
+      ];
+      const rows = posts.map(p => ({
+        ...p,
+        f2: p.f2 || 'Unknown',
+        f15: p.f15 || '',
+        f4: p.f4 || '',
+        f3: p.f3 || 0,
+        f14: p.f14 || '',
+        f23val: (p.f23 && typeof p.f23 === 'object') ? (p.f23.value || '') : (p.f23 || '')
+      }));
+      rows.sort((a, b) => {
+        let va = a[currentSort.col], vb = b[currentSort.col];
+        if (typeof va === 'string') va = va.toLowerCase();
+        if (typeof vb === 'string') vb = vb.toLowerCase();
+        if (va < vb) return currentSort.dir === 'asc' ? -1 : 1;
+        if (va > vb) return currentSort.dir === 'asc' ? 1 : -1;
+        return 0;
+      });
+      const thead = document.getElementById('postsTableHead');
+      thead.innerHTML = cols.map(c => {
+        let cls = '';
+        if (currentSort.col === c.key) cls = currentSort.dir === 'asc' ? 'sorted-asc' : 'sorted-desc';
+        return '<th class="'+cls+'" data-col="'+c.key+'">'+c.label+'</th>';
+      }).join('');
+      thead.querySelectorAll('th').forEach(th => {
+        th.addEventListener('click', () => {
+          const col = th.dataset.col;
+          if (currentSort.col === col) {
+            currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
+          } else {
+            currentSort = { col, dir: 'desc' };
+          }
+          renderPostsTable(posts);
+        });
+      });
+      const tbody = document.getElementById('postsTableBody');
+      tbody.innerHTML = rows.map(r => {
+        const urlShort = r.f4 ? new URL(r.f4).hostname.replace('www.','') : '';
+        const funnelBadge = r.f23val ? '<span class="badge badge-'+r.f23val.toLowerCase()+'">'+r.f23val+'</span>' : '';
+        return '<tr>'+
+          '<td>'+esc(r.f2)+'</td>'+
+          '<td>'+esc(r.f15)+'</td>'+
+          '<td>'+(r.f4 ? '<a href="'+esc(r.f4)+'" target="_blank">'+esc(urlShort)+'</a>' : '')+'</td>'+
+          '<td class="num views-col">'+(r.views||0).toLocaleString()+'</td>'+
+          '<td class="num clicks-col">'+(r.clicks||0).toLocaleString()+'</td>'+
+          '<td class="num conv-col">'+(r.conv||0).toLocaleString()+'</td>'+
+          '<td class="num">$'+(r.f3||0).toLocaleString()+'</td>'+
+          '<td>'+funnelBadge+'</td>'+
+          '<td class="caption-cell" title="'+esc(r.f14)+'">'+esc(r.f14)+'</td>'+
+        '</tr>';
+      }).join('');
+    }
+    function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+    function formatAiText(text) {
+      if (!text) return '';
+      return text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/\n- /g, '</p><ul><li>')
+        .replace(/\n\* /g, '</p><ul><li>')
+        .replace(/<\/li>\s*<ul>/g, '</li><li>')
+        .replace(/<li>(.*?)(?=<li>|$)/g, '<li>$1</li>')
+        .replace(/^/, '<p>')
+        .replace(/$/, '</p>')
+        .replace(/<p><\/p>/g, '');
+    }
+    function renderAiRecommendations(data) {
+      const aiRec = data.aiRecommendations;
+      if (!aiRec) return;
+      if (aiRec.overall) {
+        document.getElementById('aiModelTag').textContent = 'Powered by ' + (aiRec.model || 'Claude');
+        document.getElementById('aiRecContent').innerHTML = formatAiText(aiRec.overall);
+      }
+    }
+    function renderTrendingTopics(data) {
+      const topics = data.trendingTopics;
+      if (!topics || !topics.length) return;
+      const grid = document.getElementById('trendingGrid');
+      grid.innerHTML = topics.map(t => {
+        const trendClass = t.trend === 'rising' ? 'trend-rising' : t.trend === 'declining' ? 'trend-declining' : 'trend-stable';
+        const arrow = t.trend === 'rising' ? '\u25B2' : t.trend === 'declining' ? '\u25BC' : '\u25CF';
+        const volStr = t.volume >= 1000 ? (t.volume/1000).toFixed(0) + 'K' : (t.volume || '');
+        return '<div class="trend-item">'+
+          '<div class="trend-topic">'+esc(t.topic)+'</div>'+
+          '<div class="trend-meta">'+
+            '<span class="'+trendClass+'">'+arrow+' '+esc(t.trend || '')+'</span>'+
+            (volStr ? '<span>\u00B7 '+volStr+' searches/mo</span>' : '')+
+          '</div>'+
+        '</div>';
+      }).join('');
+    }
+    function renderChannelRecommendations(data) {
+      const recs = data.aiRecommendations && data.aiRecommendations.channelRecommendations;
+      if (!recs || !recs.length) return;
+      const container = document.getElementById('channelRecs');
+      container.innerHTML = recs.map(r =>
+        '<div class="channel-rec">'+
+          '<div class="channel-rec-header">'+esc(r.channel)+'</div>'+
+          '<div class="channel-rec-body">'+esc(r.recommendation)+'</div>'+
+          (r.rationale ? '<div class="channel-rec-rationale">'+esc(r.rationale)+'</div>' : '')+
+        '</div>'
+      ).join('');
+    }
     async function loadDashboard() {
       const loadingEl = document.getElementById('loading');
       const errorEl = document.getElementById('error');
@@ -126,39 +368,34 @@
       try {
         const resp = await fetch('data.json', { cache: 'no-cache' });
         if (!resp.ok) throw new Error('HTTP ' + resp.status);
-        const d = await resp.json();
+        DATA = await resp.json();
+        const d = DATA;
         document.getElementById('totalViews').textContent = d.totals.views;
         document.getElementById('totalClicks').textContent = d.totals.clicks;
         document.getElementById('totalConv').textContent = d.totals.conv;
-        document.getElementById('dateRange').textContent = d.dateRange + ' · Monthly performance by published date';
-        
+        document.getElementById('dateRange').textContent = d.dateRange + ' \u00B7 Monthly performance by published date';
         const tableUrl = 'https://tables.zapier.com/app/tables/t/01J60H9NRPRWTY54KN0563JMBX?secrets=MTp0YWJsZTpjekx3eWFJbWdRWjVqU29HOHhMa0NicUltbFhyLU5vcFVwRjRiS2ppNnNzOmh3dzZ2bg';
-        
-        // Format timestamp if available, fallback to date
         let timeStr = d.exportDate || new Date().toISOString().split('T')[0];
         if (d.exportTimestamp) {
           const lastRun = new Date(d.exportTimestamp);
-          timeStr = lastRun.toLocaleString('en-US', { 
-            month: 'short', day: 'numeric', year: 'numeric',
-            hour: '2-digit', minute: '2-digit', second: '2-digit',
-            timeZone: 'UTC'
-          }) + ' UTC';
+          timeStr = lastRun.toLocaleString('en-US', { month:'short', day:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit', timeZone:'UTC' }) + ' UTC';
         }
-        
-        const sourceHtml = `Source: <a href="${tableUrl}" target="_blank">Zapier Video &amp; Influencer ROI table</a> · Data exported by Zap daily - last run ${timeStr}`;
-        document.getElementById('sourceNote').innerHTML = sourceHtml;
-        
+        document.getElementById('sourceNote').innerHTML = 'Source: <a href="'+tableUrl+'" target="_blank">Zapier Video &amp; Influencer ROI table</a> \u00B7 Data exported by Zap daily - last run '+timeStr;
         loadingEl.classList.add('hidden');
         dashboardEl.classList.remove('hidden');
         makeChart('viewsChart', d.labels, d.views, '#58a6ff', fmtViews);
         makeChart('clicksChart', d.labels, d.clicks, '#f78166', fmtClicks);
         makeChart('convChart', d.labels, d.conv, '#3fb950', fmtConv);
+        renderAiRecommendations(d);
+        renderTrendingTopics(d);
+        renderChannelRecommendations(d);
       } catch (err) {
         console.error('Dashboard data load failed:', err);
         loadingEl.classList.add('hidden');
         errorEl.classList.remove('hidden');
       }
     }
+    document.getElementById('btnBack').addEventListener('click', closeDrilldown);
     loadDashboard();
   </script>
 </body>
