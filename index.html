@@ -443,6 +443,18 @@
     .drawer-kpi-val.orange { color: var(--accent-orange); }
     .drawer-kpi-val.green { color: var(--accent-green); }
 
+    .drawer-kpi-goal {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      margin-top: 3px;
+    }
+
+    .drawer-kpi-goal.on-track { color: var(--accent-green); }
+    .drawer-kpi-goal.behind { color: var(--accent-orange); }
+    .drawer-kpi-goal.at-risk { color: var(--accent-rose); }
+
     .drawer-sort {
       display: flex;
       gap: 4px;
@@ -712,6 +724,34 @@
     let currentMonth = null;
     let currentSort = 'views';
 
+    // Monthly goals by half-year period (scaled proportionally)
+    // H1 2025: 30K views/mo target
+    // H2 2025: 75K views/mo target
+    // H1 2026: 600K views/mo, 4K clicks/mo, 300 conversions/mo
+    const halfYearGoals = {
+      'H1_2025': { views: 30000, clicks: 200, conversions: 15 },
+      'H2_2025': { views: 75000, clicks: 500, conversions: 38 },
+      'H1_2026': { views: 600000, clicks: 4000, conversions: 300 }
+    };
+
+    function getGoals(monthLabel) {
+      const parts = monthLabel.split(' ');
+      const mi = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].indexOf(parts[0]);
+      const yr = 2000 + parseInt(parts[1]);
+      if (yr === 2025 && mi <= 5) return halfYearGoals['H1_2025'];
+      if (yr === 2025 && mi >= 6) return halfYearGoals['H2_2025'];
+      if (yr === 2026 && mi <= 5) return halfYearGoals['H1_2026'];
+      return null;
+    }
+
+    function goalHtml(actual, goal) {
+      if (!goal) return '';
+      const pct = Math.round((actual / goal) * 100);
+      const cls = pct >= 100 ? 'on-track' : pct >= 50 ? 'behind' : 'at-risk';
+      const label = pct >= 100 ? pct + '% ✓' : pct + '% to goal';
+      return '<div class="drawer-kpi-goal ' + cls + '">' + label + '</div>';
+    }
+
     const monthNames = {
       Feb:'February', Mar:'March', Apr:'April', May:'May',
       Jun:'June', Jul:'July', Aug:'August', Sep:'September',
@@ -761,18 +801,25 @@
       const year = parts[1] ? '20' + parts[1] : '';
       document.getElementById('drawer-title').innerHTML = `${fullMonth} <span>${year}</span>`;
       const idx = dashboardData.labels.indexOf(monthKey);
+      const g = getGoals(monthKey);
+      const vRaw = dashboardData.views[idx];
+      const cRaw = dashboardData.clicks[idx];
+      const cvRaw = dashboardData.conversions[idx];
       document.getElementById('drawer-kpis').innerHTML = `
     <div class="drawer-kpi active" data-sort="views" onclick="setSortFromKpi('views')">
       <div class="drawer-kpi-label">Views</div>
-      <div class="drawer-kpi-val blue">${formatNum(dashboardData.views[idx])}</div>
+      <div class="drawer-kpi-val blue">${formatNum(vRaw)}</div>
+      ${g ? goalHtml(vRaw, g.views) : ''}
     </div>
     <div class="drawer-kpi" data-sort="clicks" onclick="setSortFromKpi('clicks')">
       <div class="drawer-kpi-label">Clicks</div>
-      <div class="drawer-kpi-val orange">${formatNum(dashboardData.clicks[idx])}</div>
+      <div class="drawer-kpi-val orange">${formatNum(cRaw)}</div>
+      ${g ? goalHtml(cRaw, g.clicks) : ''}
     </div>
     <div class="drawer-kpi" data-sort="conversions" onclick="setSortFromKpi('conversions')">
       <div class="drawer-kpi-label">Conversions</div>
-      <div class="drawer-kpi-val green">${formatNum(dashboardData.conversions[idx])}</div>
+      <div class="drawer-kpi-val green">${formatNum(cvRaw)}</div>
+      ${g ? goalHtml(cvRaw, g.conversions) : ''}
     </div>
       `;
       document.querySelectorAll('.drawer-sort .sort-pill').forEach(p => {
